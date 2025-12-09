@@ -34,19 +34,22 @@ public class AbstractScraper implements Scraper {
 
         }
 
-        public void setOutputFolder(String outputFolder) {
+        public Builder setOutputFolder(String outputFolder) {
             this.outputFolder = outputFolder;
+            return this;
         }
 
-        public void initWebdriver(WebDriver webDriver) {
+        public Builder initWebdriver(WebDriver webDriver) {
             this.webDriver = webDriver;
+            return this;
         }
 
-        public void setExecutionThreads(short executionThreads) {
+        public Builder setExecutionThreads(short executionThreads) {
             if(executionThreads < 1) {
                 throw new IllegalArgumentException("Execution threads cannot be smaller than 1. Current value: " + executionThreads);
             }
             this.executionThreads = executionThreads;
+            return this;
         }
 
         public AbstractScraper build() {
