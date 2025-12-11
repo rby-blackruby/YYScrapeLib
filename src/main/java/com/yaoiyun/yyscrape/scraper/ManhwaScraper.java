@@ -1,29 +1,25 @@
 package com.yaoiyun.yyscrape.scraper;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 public class ManhwaScraper extends AbstractScraper {
-    private final String manhwaScraperSpecificStringExample;
 
     private ManhwaScraper(Builder builder) {
         super(builder);
-        manhwaScraperSpecificStringExample = builder.manhwaScraperSpecificStringExample;
-    }
-
-    public String getManhwaScraperSpecificStringExample() {
-        return manhwaScraperSpecificStringExample;
     }
 
     @Override
     public void run() {
-        this.getWebDriver().get(this.getAssignedContent().url());
+        this.getWebDriver().get(this.getAssignedContent().getUrl());
     }
 
     public static class Builder extends AbstractScraper.Builder<Builder> {
-        private String manhwaScraperSpecificStringExample;
-
-        public Builder setManhwaScraperSpecificExample(String value) {
-            this.manhwaScraperSpecificStringExample = value;
-            return this;
-        }
 
         @Override
         public ManhwaScraper build() {
