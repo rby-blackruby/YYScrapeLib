@@ -7,7 +7,5 @@ import java.util.List;
 public interface Scraper<C extends ScrapableContent> extends LinkScraper, ContentScraper {
     C getAssignedContent();
     Class<C> getAssignedContentClass();
-    List<String> getContentUrls();
-    List<byte[]> getContents();
 }
 
