@@ -1,9 +1,7 @@
-package com.yaoiyun.yyscrape.content.factories;
+package com.yaoiyun.yyscrape.content.assembly;
 
 import com.yaoiyun.yyscrape.content.ScrapableContent;
 import com.yaoiyun.yyscrape.content.ScrapableContentType;
-import com.yaoiyun.yyscrape.content.implementations.BattwoManhwa;
-import com.yaoiyun.yyscrape.content.implementations.MangabuddyManhwa;
 
 public class ScrapableContentFactory {
 
@@ -14,11 +12,8 @@ public class ScrapableContentFactory {
     public static <T extends ScrapableContent> T getContent(String name, String url, ScrapableContentType contentType) {
         ScrapableContent content = switch(contentType) {
             case ScrapableContentType.IMAGE -> ManhwaFactory.getManhwa(name, url);
-
-            // TODO: switch these out to actually implemented factories
-            //
-            case ScrapableContentType.TEXT -> new BattwoManhwa("Name", "Url");
-            case ScrapableContentType.VIDEO -> new MangabuddyManhwa("Name", "Url");
+            case ScrapableContentType.TEXT, ScrapableContentType.VIDEO ->
+                    throw new IllegalArgumentException("Factory is not implemented for this type of content");
         };
 
         @SuppressWarnings("unchecked")
