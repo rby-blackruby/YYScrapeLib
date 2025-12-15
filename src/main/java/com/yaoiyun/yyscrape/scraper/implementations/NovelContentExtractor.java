@@ -13,7 +13,7 @@ public class NovelContentExtractor extends ContentExtractor<Novel> {
     }
 
     @Override
-    public List<byte[]> getContents() {
+    public List<byte[]> getContents(String contentUrl) {
         return List.of();
     }
 

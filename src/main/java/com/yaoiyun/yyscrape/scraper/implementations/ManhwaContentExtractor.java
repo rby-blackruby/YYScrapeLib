@@ -12,8 +12,9 @@ public class ManhwaContentExtractor extends ContentExtractor<Manhwa> {
         super(webDriver, executionThreads, assignedContent, Manhwa.class);
     }
 
+
     @Override
-    public List<byte[]> getContents() {
+    public List<byte[]> getContents(String contentUrl) {
         return List.of();
     }
 
