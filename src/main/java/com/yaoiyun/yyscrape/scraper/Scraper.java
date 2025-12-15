@@ -1,11 +1,7 @@
 package com.yaoiyun.yyscrape.scraper;
 
-import com.yaoiyun.yyscrape.model.ScrapableContent;
+import com.yaoiyun.yyscrape.content.ScrapableContent;
 
-import java.util.List;
-
-public interface Scraper<C extends ScrapableContent> extends LinkScraper, ContentScraper {
-    C getAssignedContent();
-    Class<C> getAssignedContentClass();
+public interface Scraper<T extends ScrapableContent> extends LinkScraper<T>, ContentScraper<T> {
 }
 
