@@ -15,8 +15,6 @@ A Java-based web scraping core library for extracting content from manga, manhwa
 ### Creating & registering website specific link scraper
 
 ```java
-import org.openqa.selenium.WebDriver;
-
 // CustomWebsiteLinkScraper.java
 public class CustomWebsiteLinkScraper implements LinkScraper {
     private WebDriver webDriver;
