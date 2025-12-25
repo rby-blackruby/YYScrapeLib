@@ -1,8 +1,11 @@
 package com.yaoiyun.yyscrape.scraper;
 
 import com.yaoiyun.yyscrape.content.ScrapableContent;
+import com.yaoiyun.yyscrape.content.ScrapableContentType;
 
-public interface ContentAssignable<T extends ScrapableContent>{
-    T getAssignedContent();
-    Class<T> getAssignedContentClass();
+import java.util.List;
+
+public interface ContentAssignable {
+    ScrapableContent getAssignedContent();
+    ScrapableContentType getSupportedContentType();
 }
