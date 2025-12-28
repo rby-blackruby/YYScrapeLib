@@ -1,18 +1,21 @@
-# YYScrapeLib
+# YYSLib
 
-A Java-based web scraping core library for extracting content from manga, manhwa, novels, and other serialized content platforms, designed with a modular, extensible architecture.
+A Java-based media archival core library supporting image, video, and text content, designed with a modular, extensible architecture.
 
-## Overview
+## Disclaimer
+
+This project is provided **solely for educational, research, or interoperability purposes**.  
+The authors do not endorse or condone illegal use of this software, including downloading or distributing copyrighted material without rights or authorization, and must not be used to collect or redistribute copyrighted material without authorization from the rights holder.
 
 ## Key Features
 - **Link Discovery**: Extract URLs/links from content pages
-- **Content Scraping**: Download and process actual content (images, text, etc.)
+- **Content Archival**: Retrieve and archive authorized content (images, text, etc.)
 - **Factory-Based Dispatch**: Runtime type checking automatically selects correct implementation
-- **Scraper Registry**: Easy to add website specific scraper implementations.
+- **Scraper Registry**: Easy to add website specific archiver implementations.
 
 ## Example Usage
 
-### Creating & registering website specific link scraper
+### Creating & registering website specific link finder
 
 ```java
 // CustomWebsiteLinkScraper.java
@@ -38,10 +41,11 @@ LinkScraperFactory.register("customwebsite.com",scrapableContent ->{
 });
 ```
 
-### Discovering content urls with link scrapers
+### Discovering content urls with link finder
 
 ```java
 // Main.java
+// Example assumes you have permission to access and archive the target content
 ScrapableContent content = new ScrapableContentImpl("customwebsite-image", "https://customwebsite.com/somepage", ScrapableContentType.IMAGE);
 
 LinkScraper linkScraper = LinkScraperFactory.getLinkScraperFor(content);
