@@ -49,19 +49,17 @@ public class Base64ImageUtils {
 
         Graphics2D canvas = merged.createGraphics();
 
-        switch (mergeDirection) {
-            case MergeDirection.HORIZONTAL -> {
-                if(reversed) {
-                    canvas.drawImage(image2, 0, 0, null);
-                    canvas.drawImage(image1, image2.getWidth(), 0, null);
-                }
+        if (mergeDirection == MergeDirection.HORIZONTAL) {
+            if (reversed) {
+                canvas.drawImage(image2, 0, 0, null);
+                canvas.drawImage(image1, image2.getWidth(), 0, null);
+            } else {
                 canvas.drawImage(image1, 0, 0, null);
                 canvas.drawImage(image2, image1.getWidth(), 0, null);
             }
-            case MergeDirection.VERTICAL -> {
-                canvas.drawImage(image1, 0, 0, null);
-                canvas.drawImage(image2, 0, image1.getHeight(), null);
-            }
+        } else if (mergeDirection == MergeDirection.VERTICAL) {
+            canvas.drawImage(image1, 0, 0, null);
+            canvas.drawImage(image2, 0, image1.getHeight(), null);
         }
 
         canvas.dispose();
