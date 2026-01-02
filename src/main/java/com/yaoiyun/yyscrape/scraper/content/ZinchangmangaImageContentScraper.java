@@ -31,7 +31,7 @@ public class ZinchangmangaImageContentScraper extends AbstractScraperBase implem
 
     @Override
     public List<ScrapeResult> getContents(String contentUrl) {
-        LOGGER.info("Opening website: " + contentUrl);
+        LOGGER.info(() -> "Opening website: " + contentUrl);
         this.getWebDriver().get(contentUrl);
         this.getWebDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
 
@@ -45,15 +45,7 @@ public class ZinchangmangaImageContentScraper extends AbstractScraperBase implem
                 .map(image -> image.getAttribute("src"))
                 .filter(Objects::nonNull)
                 .filter(image -> image.contains(imageFilterKeyword))
-
                 .toList();
-
-        /*
-        System.out.println("Found the following base64 encoded image strings for " + this.getAssignedContent().getName());
-        for(var b64Image : b64Images) {
-            System.out.println(b64Image);
-        }
-        */
 
         List<ScrapeResult> imagesList = new ArrayList<>();
 
