@@ -5,13 +5,14 @@ import com.yaoiyun.yyscrape.content.ScrapableContentType;
 import com.yaoiyun.yyscrape.scraper.AbstractScraperBase;
 import com.yaoiyun.yyscrape.scraper.ContentScraper;
 import com.yaoiyun.yyscrape.scraper.ScrapeResult;
+import com.yaoiyun.yyscrape.scraper.action.ScrapeActions;
+import com.yaoiyun.yyscrape.scraper.exception.CloudflareBlockedException;
 import com.yaoiyun.yyscrape.utils.Base64ImageUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.interactions.Actions;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.time.Duration;
@@ -21,12 +22,24 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
 
-public class ZinchangmangaImageContentScraper extends AbstractScraperBase implements ContentScraper {
-    private static final Logger LOGGER = Logger.getLogger(ZinchangmangaImageContentScraper.class.getName());
+public class Base64ImageContentScraper extends AbstractScraperBase implements ContentScraper {
+    private static final Logger LOGGER = Logger.getLogger(Base64ImageContentScraper.class.getName());
+    // make it user specifiable and extract image format from base64 string
     private final String imageFilterKeyword = "data:image/jpeg;base64,";
+    private ScrapeActions scrapeActions = new ScrapeActions() {
+        @Override
+        public void onPageLoadedAction(WebDriver webDriver) {
 
-    public ZinchangmangaImageContentScraper(WebDriver webDriver, ScrapableContent assignedContent) {
+        }
+    };
+
+    public Base64ImageContentScraper(WebDriver webDriver, ScrapableContent assignedContent) {
         super(webDriver, assignedContent, ScrapableContentType.IMAGE);
+    }
+
+    public Base64ImageContentScraper(WebDriver webDriver, ScrapableContent assignedContent, ScrapeActions scrapeActions) {
+        super(webDriver, assignedContent, ScrapableContentType.IMAGE);
+        this.scrapeActions = scrapeActions;
     }
 
     @Override
@@ -35,10 +48,12 @@ public class ZinchangmangaImageContentScraper extends AbstractScraperBase implem
         this.getWebDriver().get(contentUrl);
         this.getWebDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
 
-        LOGGER.info("Scrolling to the bottom.");
-        new Actions(this.getWebDriver()).scrollByAmount(0, 20000).perform();
+        if(super.isCloudflareBlocked()) {
+            throw new CloudflareBlockedException(this.getClass().getName() + " is possibly being " +
+                    "blocked by Cloudflare. URL: " + this.getAssignedContent().getUrl());
+        }
 
-        this.getWebDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+        scrapeActions.onPageLoadedAction(this.getWebDriver());
 
         LOGGER.info("Looking for images...");
         List<String> b64Images = this.getWebDriver().findElements(By.cssSelector("img")).stream()
