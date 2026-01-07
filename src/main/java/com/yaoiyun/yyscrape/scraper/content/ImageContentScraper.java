@@ -30,7 +30,7 @@ import java.util.logging.Logger;
 
 public class ImageContentScraper extends AbstractScraperBase implements ContentScraper {
     private static final Logger LOGGER = Logger.getLogger(ImageContentScraper.class.getName());
-    private ImageUrlFilter imageUrlFilter = new ImageUrlFilter("", List.of(".webp", ".jpeg", ".jpg", ".png"));
+    private ImageUrlFilter imageUrlFilter = new ImageUrlFilter(List.of(""), List.of(".webp", ".jpeg", ".jpg", ".png"));
     private ScrapeActions scrapeActions = new ScrapeActions() {
         @Override
         public void onPageLoadedAction(WebDriver webDriver) {
@@ -131,11 +131,16 @@ public class ImageContentScraper extends AbstractScraperBase implements ContentS
         return scrapedImages;
     }
 
-    private List<String> filterImageUrls(List<WebElement> webElements) {
+    protected List<String> filterImageUrls(List<WebElement> webElements) {
         return webElements.stream()
                 .map(element -> element.getAttribute("src"))
                 .filter(Objects::nonNull)
-                .filter(imageUrl -> imageUrl.contains(imageUrlFilter.pathKeyword()))
+                .filter(imageUrl -> {
+                    for(String pathKeyword : imageUrlFilter.pathKeywords()) {
+                        if(imageUrl.contains(pathKeyword)) return true;
+                    }
+                    return false;
+                })
                 .filter(imageUrl -> {
                     for(String allowedImageExtension : imageUrlFilter.allowedImageExtensions()) {
                         if(imageUrl.contains(allowedImageExtension)) return true;
@@ -145,7 +150,7 @@ public class ImageContentScraper extends AbstractScraperBase implements ContentS
                 .toList();
     }
 
-    private HttpRequest buildHttpRequestFor(URI imageURI, Set<Cookie> cookies) {
+    protected HttpRequest buildHttpRequestFor(URI imageURI, Set<Cookie> cookies) {
         HttpRequest.Builder requestBuilder = HttpRequest.newBuilder();
         cookies.forEach(cookie -> requestBuilder.header(cookie.getName(), cookie.getValue()));
 
