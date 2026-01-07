@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -15,34 +16,50 @@ public class ImageUtils {
 
     private ImageUtils() {}
 
-    public static List<byte[]> splitLargeImage(BufferedImage largeImage, String imageExtension) {
-        // TODO: if this solves the jpeg -> webp conversion issues, make it so that instead of 2 images
-        // it splits the large image imageHeigh / IMAGE_SPLIT_THRESHOLD_PX number of images.
-        int topHeight = largeImage.getHeight() / 2;
-        int bottomHeight = largeImage.getHeight() - topHeight;
+    public static List<byte[]> splitLargeImage(BufferedImage largeImage, String imageExtension, int imageHeightThreshold) {
+        LOGGER.info("Creating subimages...");
+        List<BufferedImage> subimages = createSubimages(largeImage, imageHeightThreshold);
 
-        LOGGER.info("Creating split images...");
-        BufferedImage topImage = largeImage.getSubimage(0, 0, largeImage.getWidth(), topHeight);
-        BufferedImage bottomImage = largeImage.getSubimage(0, topHeight, largeImage.getWidth(), bottomHeight);
-
-        LOGGER.info("Writing images to baos...");
-        ByteArrayOutputStream topBaos = new ByteArrayOutputStream();
-        try {
-            if(!ImageIO.write(topImage, imageExtension, topBaos))
-                throw new ImageProcessException("Failed to write topImage to baos, ImageIO.write returned false!!");
-        } catch(IOException e) {
-            throw new ImageProcessException("Failed to write topImage to baos.", e);
-        }
-
-        ByteArrayOutputStream bottomBaos = new ByteArrayOutputStream();
-        try {
-            if(!ImageIO.write(bottomImage, imageExtension, bottomBaos))
-                throw new ImageProcessException("Failed to write bottomImage to baos, ImageIO.write returned false!!");
-        } catch(IOException e) {
-            throw new ImageProcessException("Failed to write bottomImage to baos.", e);
-        }
+        LOGGER.info("Converting subimages to byte arrays...");
+        List<byte[]> subimagesAsByteArr = subimages.stream()
+                .map(s -> convertImageToByteArr(s, imageExtension))
+                .toList();
 
         LOGGER.info("Done.");
-        return List.of(topBaos.toByteArray(), bottomBaos.toByteArray());
+        return subimagesAsByteArr;
+    }
+
+    private static byte[] convertImageToByteArr(BufferedImage image, String imageExtension) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        try {
+            if(!ImageIO.write(image, imageExtension, baos))
+                throw new ImageProcessException("Failed to write image to baos, ImageIO.write returned false!!");
+        } catch(IOException e) {
+            throw new ImageProcessException("Failed to write image to baos.", e);
+        }
+
+        return baos.toByteArray();
+    }
+
+    private static List<BufferedImage> createSubimages(BufferedImage largeImage, int imageHeightThreshold) {
+        int splitImagesCount = Math.ceilDiv(largeImage.getHeight(), imageHeightThreshold);
+        int individualHeight = Math.floorDiv(largeImage.getHeight(), splitImagesCount);
+        List<BufferedImage> splitBufferedImages = new ArrayList<>();
+
+        for(int i = 0; i < splitImagesCount; i++) {
+            BufferedImage splitImage;
+
+            if(i == splitImagesCount - 1) {
+                splitImage = largeImage.getSubimage(0, individualHeight * (splitImagesCount - 1),
+                        largeImage.getWidth(), largeImage.getHeight() - (individualHeight * (splitImagesCount - 1)));
+            } else {
+                splitImage = largeImage.getSubimage(0, individualHeight * i, largeImage.getWidth(), individualHeight);
+            }
+
+            splitBufferedImages.add(splitImage);
+        }
+
+        return splitBufferedImages;
     }
 }
