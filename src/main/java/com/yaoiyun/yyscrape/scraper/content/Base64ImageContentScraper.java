@@ -7,10 +7,10 @@ import com.yaoiyun.yyscrape.scraper.ContentScraper;
 import com.yaoiyun.yyscrape.scraper.ScrapeResult;
 import com.yaoiyun.yyscrape.scraper.action.ScrapeActions;
 import com.yaoiyun.yyscrape.scraper.exception.CloudflareBlockedException;
+import com.yaoiyun.yyscrape.scraper.exception.ImageProcessException;
 import com.yaoiyun.yyscrape.utils.Base64ImageUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.interactions.Actions;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -72,13 +72,13 @@ public class Base64ImageContentScraper extends AbstractScraperBase implements Co
             try{
                 BufferedImage mergedImage = Base64ImageUtils.merge(first, second, true);
                 if(mergedImage.getHeight() == 0 || mergedImage.getWidth() == 0) {
-                    throw new RuntimeException("Merged image contains invalid image data: height or width is zero.");
+                    throw new ImageProcessException("Merged image contains invalid image data: height or width is zero.");
                 }
 
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 final boolean writeSuccess = ImageIO.write(mergedImage, "webp", baos);
                 if (!writeSuccess) {
-                    throw new RuntimeException("Could not write image. Check for valid color space (no alpha channel)");
+                    throw new ImageProcessException("Could not write image. Check for valid color space (no alpha channel)");
                 }
 
                 ScrapeResult result = ScrapeResult.ofImage(baos.toByteArray(), "webp");
