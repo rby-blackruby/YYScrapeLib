@@ -3,11 +3,11 @@ package com.yaoiyun.yyscrape.utils;
 import com.yaoiyun.yyscrape.scraper.exception.ImageProcessException;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -27,6 +27,10 @@ public class ImageUtils {
 
         LOGGER.info("Done.");
         return subimagesAsByteArr;
+    }
+
+    public static String detectImageExtensionFromUrl(String imageUrl) {
+        return Arrays.asList(imageUrl.split( "\\.")).getLast();
     }
 
     private static byte[] convertImageToByteArr(BufferedImage image, String imageExtension) {
